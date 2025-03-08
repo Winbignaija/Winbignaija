@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Contest</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- This file is hosted on GitHub Pages by winbignaija -->
+  <!-- Flutterwave Inline Script -->
+  <script src="https://checkout.flutterwave.com/v3.js"></script>
+  <style>
+    /* White theme: Clean, bright design */
+    body {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #ffffff;
+      color: #000;
+      -webkit-user-select: none; /* Disable selection on some browsers */
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 20px;
+    }
+    /* Grand Prize Section */
+    #grandPrize {
+      font-size: 28px;
+      text-align: center;
+      margin: 20px 0;
+      padding: 10px;
+      font-weight: bold;
+      color: #333;
+      text-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    /* Sections (Registration, Vote, Instructions) */
+    .form-section, .participants-section, .instructions-section, .vote-section {
+      background: #f9f9f9;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      color: #000;
+    }
+    input[type="text"], input[type="email"], input[type="file"], select, input[type="number"] {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: #fff;
+      color: #000;
+    }
+    button {
+      padding: 10px 15px;
+      margin: 10px 0;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover { background-color: #0056b3; }
+    /* Contestant Card and Gallery Item Styling */
+    .participant-card, .gallery-item {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin: 10px;
+      padding: 10px;
+      display: inline-block;
+      vertical-align: top;
+      width: 200px;
+      text-align: center;
+      background: #fff;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      cursor: pointer;
+    }
+    .participant-card img, .gallery-item img {
+      width: 100%;
+      height: auto;
+      border-radius: 5px;
+    }
+    .hidden { display: none; }
+    .dropdown {
+      cursor: pointer;
+      padding: 10px;
+      background-color: #eee;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin: 10px 0;
+    }
+    .dropdown-content {
+      display: none;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background: #f9f9f9;
+    }
+    /* Gallery Slider */
+    #galleryContainer {
+      position: relative;
+      margin: 20px 0;
+    }
+    #participantsGallery {
+      overflow-x: auto;
+      white-space: nowrap;
+      scroll-behavior: smooth;
+      padding: 10px 40px; /* leave space for arrows */
+    }
+    .gallery-item {
+      display: inline-block;
+      vertical-align: top;
+      width: 200px;
+      margin-right: 10px;
+    }
+    .gallery-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      z-index: 10;
+    }
+    #leftArrow { left: 0; }
+    #rightArrow { right: 0; }
+    /* Chat Bar / Footer at the bottom */
+    #chatBar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: #f1f1f1;
+      color: #000;
+      padding: 10px;
+      text-align: center;
+      font-size: 16px;
+      border-top: 2px solid #ccc;
+      z-index: 1000;
+    }
+    /* Winners Record Section */
+    #winnersRecord {
+      background: #f9f9f9;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    /* Footer Instructions Dropdown */
+    #footerInstructions {
+      background: #f9f9f9;
+      padding: 10px;
+      margin: 15px 0;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    @media(max-width: 600px) {
+      .participant-card, .gallery-item { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Grand Prize Section -->
+    <div id="grandPrize">Grand Prize: 100,000 Naira</div>
+    
+    <!-- Registration Section -->
+    <div class="form-section" id="registrationSection">
+      <h2>Contestant Registration (200 Naira)</h2>
+      <form id="registrationForm">
+        <label>Name:</label>
+        <input type="text" id="name" required placeholder="Enter your name">
+        <label>Email:</label>
+        <input type="email" id="email" required placeholder="Enter your email">
+        <label>Contest Type:</label>
+        <select id="contestType">
+          <option value="photo">Photo Contest</option>
+          <option value="music">Music Contest</option>
+          <option value="voting">Voting Contest</option>
+        </select>
+        <label>Upload your file (Photo or Song):</label>
+        <input type="file" id="fileUpload" accept="image/*,audio/*" required>
+        <button type="button" onclick="registerContestant()">Register &amp; Pay 200 Naira</button>
+      </form>
+    </div>
+
+    <!-- Vote Section with Search and Vote Quantity -->
+    <div class="vote-section" id="voteSection">
+      <h2>Vote for your Favorite Contestant</h2>
+      <input type="text" id="voteByIdInput" placeholder="Enter Unique ID">
+      <label>Number of Votes:</label>
+      <input type="number" id="voteQuantity" value="1" min="1">
+      <button onclick="voteById()">Vote</button>
+      <br><br>
+      <input type="text" id="searchContestantInput" placeholder="Search contestant by name or ID">
+      <button onclick="searchContestant()">Search</button>
+      <div id="searchResults"></div>
+    </div>
+    
+    <!-- Instructions Dropdowns -->
+    <div class="instructions-section">
+      <div class="dropdown" onclick="toggleDropdown('howToParticipate')">How to Participate</div>
+      <div class="dropdown-content" id="howToParticipate">
+        <p>Register by filling out your details and paying a 200 Naira fee. Upload your photo (or song) to be displayed. After payment you’ll receive a unique ID and a voting link.</p>
+      </div>
+      <div class="dropdown" onclick="toggleDropdown('howToVote')">How to Vote</div>
+      <div class="dropdown-content" id="howToVote">
+        <p>Click on a contestant's voting link or enter the Unique ID in the vote section. Then, specify how many votes you wish to purchase (₦50 per vote) and click "Vote".</p>
+      </div>
+      <div class="dropdown" onclick="toggleDropdown('contestTypes')">Contest Type</div>
+      <div class="dropdown-content" id="contestTypes">
+        <p>Select from Photo Contest, Music Contest, or Voting Contest. (The registration is set to your chosen type.)</p>
+      </div>
+    </div>
+    
+    <!-- Participants Bar and Contestants Display -->
+    <div>
+      <h2>Participants (<span id="participantCount">0</span>)</h2>
+      <div id="participantsBar"></div>
+    </div>
+    <div>
+      <h2>Contestants</h2>
+      <div id="contestantsList"></div>
+    </div>
+    
+    <!-- Participants Gallery as Slider -->
+    <div>
+      <h2>Participants Gallery</h2>
+      <div id="galleryContainer">
+        <button id="leftArrow" class="gallery-arrow" onclick="scrollGallery(-200)">&#8592;</button>
+        <div id="participantsGallery"></div>
+        <button id="rightArrow" class="gallery-arrow" onclick="scrollGallery(200)">&#8594;</button>
+      </div>
+    </div>
+    
+    <!-- Winner Announcement and Contest Restart -->
+    <div>
+      <h2>Winner Announcement</h2>
+      <button onclick="finishContest()">Finish Contest</button>
+      <div id="winnerSection" class="hidden">
+        <h3>Winner 🏆</h3>
+        <div id="winnerDisplay"></div>
+        <!-- REG-ID button appears only in winner section -->
+        <button id="regIdWinnerBtn" onclick="regIdWinner()" style="display:none;">REG-ID</button>
+      </div>
+    </div>
+    
+    <!-- Winners Record Section -->
+    <div>
+      <h2>Winners Record</h2>
+      <div id="winnersRecord"></div>
+    </div>
+    
+    <!-- Footer Instructions Dropdown -->
+    <div id="footerInstructions">
+      <div class="dropdown" onclick="toggleDropdown('footerInstrContent')">Important Instructions</div>
+      <div class="dropdown-content" id="footerInstrContent">
+        <p>The uploaded photo must be of the original contestant. Please do not use someone else's image.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Bar / Footer (Fixed at Bottom) -->
+  <div id="chatBar">
+    <div>Current Participants: <span id="currentCount">0</span> | Remaining Participants: <span id="remainingCount">1000</span></div>
+    <div>🇳🇬 Nigeria | Sponsored by Clifbook</div>
+  </div>
+
+  <script>
+    // Retrieve participants and winners from localStorage or initialize empty arrays
+    let participants = JSON.parse(localStorage.getItem('participants')) || [];
+    let winners = JSON.parse(localStorage.getItem('winners')) || [];
+    const totalParticipantsRequired = 1000;
+
+    // Save participants and winners arrays to localStorage
+    function saveParticipants() {
+      localStorage.setItem('participants', JSON.stringify(participants));
+    }
+    function saveWinners() {
+      localStorage.setItem('winners', JSON.stringify(winners));
+    }
+
+    // Update chat bar with current and remaining participant counts
+    function updateChatBar() {
+      const currentCount = participants.length;
+      const remainingCount = totalParticipantsRequired - currentCount;
+      document.getElementById('currentCount').innerText = currentCount;
+      document.getElementById('remainingCount').innerText = remainingCount > 0 ? remainingCount : 0;
+    }
+
+    // Render winners record section
+    function renderWinnersRecord() {
+      const winnersRecord = document.getElementById('winnersRecord');
+      winnersRecord.innerHTML = '';
+      if (winners.length === 0) {
+        winnersRecord.innerHTML = "<p>No winners recorded yet.</p>";
+      } else {
+        winners.forEach(w => {
+          let wCard = document.createElement('div');
+          wCard.style.border = "1px solid #ccc";
+          wCard.style.borderRadius = "5px";
+          wCard.style.margin = "10px";
+          wCard.style.padding = "10px";
+          wCard.style.background = "#fff";
+          wCard.innerHTML = `<strong>${w.name}</strong> (ID: ${w.uniqueId}) - Votes: ${w.votes}`;
+          winnersRecord.appendChild(wCard);
+        });
+      }
+    }
+
+    // Render participants: update contestants list, participants bar, and gallery
+    function renderParticipants() {
+      const participantsBar = document.getElementById('participantsBar');
+      const contestantsList = document.getElementById('contestantsList');
+      const participantsGallery = document.getElementById('participantsGallery');
+      participantsBar.innerHTML = '';
+      contestantsList.innerHTML = '';
+      participantsGallery.innerHTML = '';
+      document.getElementById('participantCount').innerText = participants.length;
+      updateChatBar();
+
+      // Sort participants by votes (descending)
+      let sorted = [...participants].sort((a, b) => b.votes - a.votes);
+
+      sorted.forEach(p => {
+        // Create contestant card
+        let card = document.createElement('div');
+        card.className = 'participant-card';
+        
+        // Image element with copy functionality
+        let img = document.createElement('img');
+        img.src = p.fileData;
+        img.style.cursor = 'pointer';
+        img.onclick = function(e) {
+          e.stopPropagation();
+          let link = window.location.origin + window.location.pathname + "?vote=" + p.uniqueId;
+          navigator.clipboard.writeText(link).then(function() {
+            alert("Voting link copied: " + link);
+          }, function(err) {
+            alert("Error copying link: " + err);
+          });
+        };
+        card.appendChild(img);
+        
+        let info = document.createElement('p');
+        info.innerHTML = `<strong>${p.name}</strong><br>Unique ID: ${p.uniqueId}<br>Votes: <span id="votes-${p.uniqueId}">${p.votes}</span>`;
+        card.appendChild(info);
+        
+        // Voting link (clicking pre-fills vote input)
+        let voteLink = document.createElement('p');
+        voteLink.innerHTML = `Voting Link: <a href="javascript:void(0)" onclick="voteLinkClicked('${p.uniqueId}')">Vote for this contestant</a>`;
+        card.appendChild(voteLink);
+        
+        // Copy Voting Link Button
+        let copyBtn = document.createElement('button');
+        copyBtn.innerText = 'Copy Voting Link';
+        copyBtn.onclick = function() {
+          let link = window.location.origin + window.location.pathname + "?vote=" + p.uniqueId;
+          navigator.clipboard.writeText(link).then(function() {
+            alert("Voting link copied: " + link);
+          }, function(err) {
+            alert("Error copying link: " + err);
+          });
+        };
+        card.appendChild(copyBtn);
+        
+        // Vote button (calls initiateVotePayment)
+        let voteBtn = document.createElement('button');
+        voteBtn.innerText = 'Vote (50 Naira per vote)';
+        voteBtn.onclick = function() { initiateVotePayment(p.uniqueId); };
+        card.appendChild(voteBtn);
+        
+        // Telegram Join button (visible after payment)
+        if(p.registrationPaid) {
+          let telegramBtn = document.createElement('button');
+          telegramBtn.innerText = 'Join Telegram';
+          telegramBtn.onclick = function() {
+            window.open("https://t.me/+nOkq6X_ZeZwzMGE0", '_blank');
+          };
+          card.appendChild(telegramBtn);
+        }
+        contestantsList.appendChild(card);
+
+        // Add to Participants Bar (simplified view)
+        let barItem = document.createElement('span');
+        barItem.style.marginRight = '10px';
+        barItem.innerText = p.uniqueId;
+        participantsBar.appendChild(barItem);
+
+        // Add to Participants Gallery
+        let galleryItem = document.createElement('div');
+        galleryItem.className = 'gallery-item';
+        let galleryImg = document.createElement('img');
+        galleryImg.src = p.fileData;
+        galleryItem.appendChild(galleryImg);
+        let galleryCaption = document.createElement('p');
+        galleryCaption.innerText = p.uniqueId;
+        galleryItem.appendChild(galleryCaption);
+        galleryItem.onclick = function() { initiateVotePayment(p.uniqueId); };
+        participantsGallery.appendChild(galleryItem);
+      });
+    }
+
+    // Function for effective voting link: pre-fill vote input and scroll to vote section
+    function voteLinkClicked(uniqueId) {
+      document.getElementById('voteByIdInput').value = uniqueId;
+      alert("You are voting for contestant with Unique ID: " + uniqueId);
+      document.getElementById('voteSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Toggle dropdown visibility
+    function toggleDropdown(id) {
+      const el = document.getElementById(id);
+      el.style.display = (el.style.display === 'block') ? 'none' : 'block';
+    }
+
+    // Search for a contestant by name or Unique ID in the vote section; show image and details
+    function searchContestant() {
+      let query = document.getElementById("searchContestantInput").value.toLowerCase();
+      let resultsDiv = document.getElementById("searchResults");
+      resultsDiv.innerHTML = "";
+      if(query.trim() === ""){
+        resultsDiv.innerHTML = "Please enter a search term.";
+        return;
+      }
+      let found = false;
+      participants.forEach(function(p) {
+        if(p.name.toLowerCase().includes(query) || p.uniqueId.toLowerCase().includes(query)){
+          found = true;
+          let resultCard = document.createElement("div");
+          resultCard.style.border = "1px solid #ccc";
+          resultCard.style.borderRadius = "5px";
+          resultCard.style.padding = "5px";
+          resultCard.style.margin = "5px 0";
+          // Append image
+          let img = document.createElement("img");
+          img.src = p.fileData;
+          img.style.width = "100px";
+          img.style.display = "block";
+          resultCard.appendChild(img);
+          // Append info
+          resultCard.innerHTML += `<strong>${p.name}</strong> (ID: ${p.uniqueId}) - Votes: ${p.votes}`;
+          let voteBtn = document.createElement("button");
+          voteBtn.innerText = "Vote (50 Naira per vote)";
+          voteBtn.onclick = function(){ initiateVotePayment(p.uniqueId); };
+          resultCard.appendChild(voteBtn);
+          let copyBtn = document.createElement("button");
+          copyBtn.innerText = "Copy Voting Link";
+          copyBtn.onclick = function(){
+              let link = window.location.origin + window.location.pathname + "?vote=" + p.uniqueId;
+              navigator.clipboard.writeText(link).then(function(){
+                  alert("Voting link copied: " + link);
+              }, function(err){
+                  alert("Error copying link: " + err);
+              });
+          };
+          resultCard.appendChild(copyBtn);
+          resultsDiv.appendChild(resultCard);
+        }
+      });
+      if(!found){
+        resultsDiv.innerHTML = "No matching contestants found.";
+      }
+    }
+
+    // Function to scroll the gallery horizontally (manual control)
+    function scrollGallery(delta) {
+      document.getElementById("participantsGallery").scrollBy({ left: delta, behavior: 'smooth' });
+    }
+
+    // Automatic sliding for the gallery (auto-scroll every 5 seconds)
+    setInterval(function() {
+      let gallery = document.getElementById("participantsGallery");
+      if(gallery.scrollLeft + gallery.clientWidth >= gallery.scrollWidth) {
+        gallery.scrollLeft = 0;
+      } else {
+        gallery.scrollLeft += 200;
+      }
+    }, 5000);
+
+    // Registration function (200 Naira) – disallow registration if contest is full
+    function registerContestant() {
+      if (participants.length >= totalParticipantsRequired) {
+        alert("Registration closed – contest is full.");
+        return;
+      }
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const contestType = document.getElementById('contestType').value;
+      const fileInput = document.getElementById('fileUpload');
+      if (!name || !email || fileInput.files.length === 0) {
+        alert('Please fill all details and upload a file.');
+        return;
+      }
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const fileData = e.target.result;
+        FlutterwaveCheckout({
+          public_key: "FLWPUBK-e1353563c836f63dc0c41e51544daaa8-X",
+          tx_ref: "rereg-" + Date.now(),
+          amount: 200,
+          currency: "NGN",
+          payment_options: "card, mobilemoney, ussd",
+          customer: { email: email, name: name },
+          callback: function(response) {
+            // Generate a unique ID: first 3 letters (uppercase) of name + random 3-digit number.
+            let uniqueId = name.substring(0,3).toUpperCase() + Math.floor(100 + Math.random() * 900);
+            while(participants.find(p => p.uniqueId === uniqueId)) {
+              uniqueId = name.substring(0,3).toUpperCase() + Math.floor(100 + Math.random() * 900);
+            }
+            let participant = {
+              name: name,
+              email: email,
+              contestType: contestType,
+              fileData: fileData,
+              uniqueId: uniqueId,
+              votes: 0,
+              registrationPaid: true
+            };
+            participants.push(participant);
+            // When 1000 participants are reached, record contest end time (30 days from now) if not already set.
+            if(participants.length === totalParticipantsRequired && !localStorage.getItem("contestEndTime")) {
+              let endTime = new Date().getTime() + (30 * 24 * 60 * 60 * 1000);
+              localStorage.setItem("contestEndTime", endTime);
+              alert("Contest has reached 1000 participants. The contest will now run for 30 days.");
+            }
+            saveParticipants();
+            renderParticipants();
+            alert("Registration successful! Your Unique ID is: " + uniqueId);
+          },
+          onclose: function() {},
+          customizations: { title: "Contest Registration", description: "Payment for contest registration" }
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Function to initiate vote payment (50 Naira per vote) for a given participant.
+    // It reads the vote quantity from the input field.
+    function initiateVotePayment(uniqueId) {
+      let participant = participants.find(p => p.uniqueId === uniqueId);
+      if (!participant) {
+        alert("No participant found with Unique ID: " + uniqueId);
+        return;
+      }
+      let quantity = parseInt(document.getElementById("voteQuantity").value) || 1;
+      let amount = quantity * 50;
+      FlutterwaveCheckout({
+        public_key: "FLWPUBK-e1353563c836f63dc0c41e51544daaa8-X",
+        tx_ref: "vote-" + Date.now(),
+        amount: amount,
+        currency: "NGN",
+        payment_options: "card, mobilemoney, ussd",
+        customer: { email: "voter@example.com", name: "Voter" },
+        callback: function(response) {
+          participant.votes += quantity;
+          saveParticipants();
+          document.getElementById("votes-" + uniqueId).innerText = participant.votes;
+          alert("Vote successful for " + participant.name + " (" + quantity + " vote(s) for ₦" + amount + ")");
+        },
+        onclose: function() {},
+        customizations: { title: "Contest Vote", description: "Payment for voting" }
+      });
+    }
+
+    // Vote using Unique ID input from the vote section
+    function voteById() {
+      const voteId = document.getElementById('voteByIdInput').value;
+      if(!voteId) {
+        alert("Please enter a Unique ID.");
+        return;
+      }
+      let participant = participants.find(p => p.uniqueId === voteId.toUpperCase());
+      if (!participant) {
+        alert("No participant found with Unique ID: " + voteId);
+        return;
+      }
+      initiateVotePayment(voteId.toUpperCase());
+    }
+
+    // Finish contest: Only if 1000 participants have registered and 30 days have passed.
+    function finishContest() {
+      if(participants.length < totalParticipantsRequired) {
+        alert("Contest is not yet complete. Currently " + participants.length + " participants.");
+        return;
+      }
+      let contestEndTime = localStorage.getItem("contestEndTime");
+      if(!contestEndTime) {
+        contestEndTime = new Date().getTime() + (30 * 24 * 60 * 60 * 1000);
+        localStorage.setItem("contestEndTime", contestEndTime);
+        alert("Contest has reached 1000 participants. The contest will end 30 days from now.");
+        return;
+      }
+      contestEndTime = parseInt(contestEndTime, 10);
+      let currentTime = new Date().getTime();
+      if(currentTime < contestEndTime) {
+        let remaining = contestEndTime - currentTime;
+        let days = Math.floor(remaining / (24*60*60*1000));
+        alert("Contest period not finished yet. Please wait " + days + " more days.");
+        return;
+      }
+      // Determine winner (contestant with the highest votes)
+      let winner = participants.reduce((prev, curr) => (curr.votes > prev.votes ? curr : prev));
+      let winnerHTML = `<p><strong>${winner.name}</strong><br>Unique ID: ${winner.uniqueId}<br>Votes: ${winner.votes}</p>
+                        <img src="${winner.fileData}" style="width:200px; height:auto;">`;
+      winnerHTML += `<br><button onclick="claimPrize('${winner.name}', '${winner.uniqueId}')">Claim Prize</button>`;
+      document.getElementById('winnerDisplay').innerHTML = winnerHTML;
+      document.getElementById('winnerSection').classList.remove('hidden');
+      document.getElementById('regIdWinnerBtn').style.display = 'inline-block';
+      alert("Contest finished! " + winner.name + " wins 🏆 and is rewarded with 100,000 Naira!");
+      
+      // Record winner for historical purposes
+      winners.push(winner);
+      saveWinners();
+      renderWinnersRecord();
+      
+      // Reset contest for a new round (clear participants and remove contestEndTime)
+      participants = [];
+      localStorage.removeItem("contestEndTime");
+      saveParticipants();
+      renderParticipants();
+    }
+
+    // REG-ID button function for the winner (guidance message)
+    function regIdWinner() {
+      alert("Please use the Claim Prize button to claim your prize via WhatsApp.");
+    }
+
+    // Redirect winner to WhatsApp to claim prize
+    function claimPrize(name, uniqueId) {
+      let message = encodeURIComponent(`Hello, I am ${name} (Unique ID: ${uniqueId}) and I claim my prize of 100,000 Naira.`);
+      window.open(`https://wa.me/2347042907588?text=${message}`, '_blank');
+    }
+
+    // On page load: render participants, winners record, and check for a voting link parameter
+    window.onload = function() {
+      renderParticipants();
+      renderWinnersRecord();
+      const urlParams = new URLSearchParams(window.location.search);
+      const voteParam = urlParams.get('vote');
+      if(voteParam) {
+        document.getElementById('voteByIdInput').value = voteParam.toUpperCase();
+        alert("You are directed to vote for contestant with Unique ID: " + voteParam.toUpperCase());
+        document.getElementById('voteSection').scrollIntoView({ behavior: 'smooth' });
+      }
+    };
+
+    // Prevent right-click and certain key events to discourage screenshots/screen recording
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    document.addEventListener('keydown', function(e) {
+      if (e.keyCode === 123 || 
+         (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) ||
+         (e.ctrlKey && e.keyCode === 85) ||
+         (e.keyCode === 44)) {
+        e.preventDefault();
+      }
+    });
+  </script>
+</body>
+</html>
